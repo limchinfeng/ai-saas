@@ -16,6 +16,11 @@ const LandingPage = () => {
                     Register
                 </Button>
             </Link>
+            <Link href="/dashboard">
+                <Button>
+                    Dashboard
+                </Button>
+            </Link>
         </div>    
     </div>
     )
