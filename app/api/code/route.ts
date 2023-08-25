@@ -4,6 +4,8 @@ import Configuration from "openai";
 import OpenAI from "openai";
 import ChatCompletionRequestMessage from "openai";
 
+import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -12,10 +14,20 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const freeTrial = await checkApiLimit();
+
+    if(!freeTrial) {
+      return new NextResponse("Free trial has expired.", {
+        status: 403
+      });
+    }
+
 const instructionMessage: ChatCompletionRequestMessage = {
   role: "system",
   content: "You are a code generator. You must answer only in markdown code snippets. Use code comments for explaination"
 }
+
+await increaseApiLimit();
 
 export async function POST(
   req: Request
