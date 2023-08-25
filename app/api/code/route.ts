@@ -14,21 +14,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const freeTrial = await checkApiLimit();
-
-    if(!freeTrial) {
-      return new NextResponse("Free trial has expired.", {
-        status: 403
-      });
-    }
-
-const instructionMessage: ChatCompletionRequestMessage = {
-  role: "system",
-  content: "You are a code generator. You must answer only in markdown code snippets. Use code comments for explaination"
-}
-
-await increaseApiLimit();
-
 export async function POST(
   req: Request
 ) {
@@ -49,10 +34,25 @@ export async function POST(
       return new NextResponse("Messages are required", { status: 400 });
     }
 
+    const instructionMessage: ChatCompletionRequestMessage = {
+      role: "system",
+      content: "You are a code generator. You must answer only in markdown code snippets. Use code comments for explaination"
+    }
+    
+    await increaseApiLimit();
+
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [instructionMessage, ...messages]
     });
+
+    const freeTrial = await checkApiLimit();
+
+    if(!freeTrial) {
+      return new NextResponse("Free trial has expired.", {
+        status: 403
+      });
+    }
 
     return NextResponse.json(response.data.choices[0].message);
   } catch (error) {

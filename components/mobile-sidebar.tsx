@@ -7,7 +7,13 @@ import { UserButton } from '@clerk/nextjs';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import Sidebar from './sidebar';
 
-const MobileSidebar = () => {
+interface MobileSidebarProps {
+  apiLimitCount: number;
+}
+
+const MobileSidebar: React.FC<MobileSidebarProps> = ({
+  apiLimitCount
+}) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -26,7 +32,7 @@ const MobileSidebar = () => {
             </Button>
         </SheetTrigger>
         <SheetContent side="left" className='p-0'>
-            <Sidebar />
+            <Sidebar apiLimitCount={apiLimitCount}/>
         </SheetContent>
     </Sheet>
   )

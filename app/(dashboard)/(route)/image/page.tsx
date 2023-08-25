@@ -18,9 +18,10 @@ import Loader from "@/components/loader";
 import { SelectTrigger, Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Card, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
-
+import { useProModal } from "@/hooks/use-pro-modal";
 
 const ImagePage = () => {
+  const proModal = useProModal();
   const router = useRouter();
   const [images, setImages] = useState<string[]>([]);
 
@@ -45,7 +46,9 @@ const ImagePage = () => {
       setImages(urls);
       form.reset();
     } catch (error: any) {
-      console.log(error);
+      if(error?.response?.status === 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }
